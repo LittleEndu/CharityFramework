@@ -26,7 +26,7 @@ export const loadPlugin = async (url: string, manifest: PluginManifest) => {
 		throw new Error('failed to fetch bundle status=' + res.status);
 	}
 
-	const module = URL.createObjectURL(await res.blob());
+	const module = URL.createObjectURL(new Blob([await res.text()], { type: 'text/javascript' }));
 
 	const def: PluginDefinition = (await import(module)).default;
 	validatePluginDefintion(def);
