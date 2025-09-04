@@ -6,7 +6,6 @@ import * as ui from './ui';
 import { executeDeepLink } from './deeplink';
 import { Patch } from '@placecharity/framework-types';
 import { checkForUpdates } from './utils/updates';
-import { fetchWithoutCors } from './utils/gm';
 
 document.documentElement.style.display = 'none';
 window.stop();
