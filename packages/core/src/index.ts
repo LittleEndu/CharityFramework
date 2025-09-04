@@ -6,6 +6,7 @@ import * as ui from './ui';
 import { executeDeepLink } from './deeplink';
 import { Patch } from '@placecharity/framework-types';
 import { checkForUpdates } from './utils/updates';
+import { fetchWithoutCors } from './utils/gm';
 
 document.documentElement.style.display = 'none';
 window.stop();
@@ -109,7 +110,12 @@ window.stop();
 	for (const module of document.querySelectorAll('link[rel="modulepreload"]')) {
 		module.setAttribute('rel', 'modulepreload-shim');
 	}
-	await import('https://esm.sh/es-module-shims');
+
+	const esmShims = await (await fetch('https://esm.sh/es-module-shims')).text();
+	const esmShimsExport = await (await fetch('https://esm.sh' + esmShims.match(/"(\/es-module-shims.*)"/)[1])).blob();
+	const esmShimsPatch = esmShims.replaceAll(/"(\/es-module-shims.*)"/g, `"${URL.createObjectURL(esmShimsExport)}"`);
+
+	await import(URL.createObjectURL(new Blob([esmShimsPatch], { type: 'text/javascript' })));
 	for (const script of document.querySelectorAll<HTMLScriptElement>('script:not([type])')) {
 		const scriptShim = document.createElement('script');
 		// es-module-shims assumes that everything is running as an es module, so this bullshit is needed.
