@@ -32,7 +32,7 @@ export const exposeGame = (): Patch[] => {
 		},
 		{
 			name: 'exposeInstanceMap',
-			find: 'styles/liberty',
+			find: 'styles/',
 			replace: {
 				match: /([a-zA-Z_$][\w$]*)=new [a-zA-Z_$][\w$]*\.Map\(.*?}\);/,
 				replace: (orig, mapVar) => `${orig}${expose('game', 'map', mapVar)}`,
