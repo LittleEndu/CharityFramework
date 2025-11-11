@@ -70,6 +70,16 @@ window.stop();
 
 	ui.init();
 
+	let patchesTimeout: number;
+	const checkPatches = () => {
+		for (const patch of patches) {
+			if (!patch) continue;
+			if (patch.patched) continue;
+			const reason = patch.disable ? 'disabled' : 'not found';
+			console.warn('[Charity] patch ' + patch.name + ' was not applied because it was ' + reason);
+		}
+	}
+
 	window.esmsInitOptions = {
 		shimMode: true,
 		nativePassthrough: false,
@@ -89,6 +99,7 @@ window.stop();
 					console.log(`[Charity] patching ${url} with patch ${patch.name}`);
 
 					const replaced = sourceStr.replace(patch.replace.match, patch.replace.replace);
+					patch.patched = true;
 
 					if (replaced === sourceStr) {
 						console.warn('[Charity] patch ' + patch.name + ' made no changes to ' + url + ' even though it matched');
@@ -100,6 +111,8 @@ window.stop();
 				}
 				src.source = sourceStr;
 			}
+			if (patchesTimeout) clearTimeout(patchesTimeout);
+			patchesTimeout = setTimeout(checkPatches, 1000);
 			return src;
 		},
 	};

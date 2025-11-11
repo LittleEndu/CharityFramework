@@ -6,4 +6,5 @@ export interface Patch {
 		match: RegExp | string;
 		replace: (substring: string, ...args: string[]) => string;
 	};
+	patched?: boolean;
 }
